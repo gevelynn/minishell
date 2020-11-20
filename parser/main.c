@@ -2,65 +2,66 @@
 #include <stdio.h>
 
 // сдвиг строки на один символ
-// void line_shift(char **str, int i, int j)
-// {
-// 	j = i - 1;
-// 	while((*str)[++j])
-// 		(*str)[j] = (*str)[j + 1];
-
-// }
+void line_shift(char **str, int j)
+{
+	// j = i - 1;
+	while((*str)[++j])
+		(*str)[j] = (*str)[j + 1];
+}
 
 // убираем двойные кавычки
-void	double_quotes(char **str)
-{
-	int i;
-	int j;
+// void	double_quotes(char **str)
+// {
+// 	int i;
 
-	i = 0;
-	while ((*str)[i])
-	{
-		if (((*str)[i] == '\'' && (*str)[i + 1] == '\'') ||
-			((*str)[i] == '\"' && (*str)[i + 1] == '\"'))
-		{
-			j = i - 1;
-			while((*str)[++j])
-				(*str)[j] = (*str)[j + 1];
-			j = i - 1;
-			while((*str)[++j])
-				(*str)[j] = (*str)[j + 1];
-		}
-		else
-			i++;
-	}
-}
+// 	i = 0;
+// 	while ((*str)[i])
+// 	{
+// 		if (((*str)[i] == '\'' && (*str)[i + 1] == '\'') ||
+// 			((*str)[i] == '\"' && (*str)[i + 1] == '\"'))
+// 		{
+// 			line_shift(str, (i - 1));
+// 			line_shift(str, (i - 1));
+// 		}
+// 		else
+// 			i++;
+// 	}
+// }
 
 
 // убираем кавычки, согласно синтаксису bash
 void	syntax_check(char **str)
 {
-	// int i;
-	// int j;
+	int i;
+	int j;
 
-	double_quotes(str);
-	// i = 0;
-	// while ((*str)[i])
-	// {
-	// 	if ((*str)[i] == '\'' || (*str)[i] == '\"')
-	// 	{
-	// 		if ((*str)[i] == '\'')
-	// 		{
-	// 			j = i;
-	// 			while ((*str[++j] != '\''))
-	// 				;
-
-	// 		}
-	// 		else
-	// 		{
-
-	// 		}
-	// 	}
-	// }
-
+	// double_quotes(str);
+	i = 0;
+	while ((*str)[i])
+	{
+		if ((*str)[i] == '\'' || (*str)[i] == '\"')
+		{
+			if ((*str)[i] == '\'')
+			{
+				j = i;
+				line_shift(str, (i - 1));
+				while ((*str)[j] != '\'')
+					j++;
+				line_shift(str, (j - 1));
+			}
+			else
+			{
+				j = i;
+				line_shift(str, (i - 1));
+				while ((*str)[j] != '\"')
+					j++;
+				line_shift(str, (j - 1));
+			}
+			i = j;
+		}
+		else
+			i++;
+	}
 }
 
 // Поиск команды
