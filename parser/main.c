@@ -1,7 +1,70 @@
 #include "parser.h"
 #include <stdio.h>
 
-int command_search(char *str)
+// сдвиг строки на один символ
+// void line_shift(char **str, int i, int j)
+// {
+// 	j = i - 1;
+// 	while((*str)[++j])
+// 		(*str)[j] = (*str)[j + 1];
+
+// }
+
+// убираем двойные кавычки
+void	double_quotes(char **str)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while ((*str)[i])
+	{
+		if (((*str)[i] == '\'' && (*str)[i + 1] == '\'') ||
+			((*str)[i] == '\"' && (*str)[i + 1] == '\"'))
+		{
+			j = i - 1;
+			while((*str)[++j])
+				(*str)[j] = (*str)[j + 1];
+			j = i - 1;
+			while((*str)[++j])
+				(*str)[j] = (*str)[j + 1];
+		}
+		else
+			i++;
+	}
+}
+
+
+// убираем кавычки, согласно синтаксису bash
+void	syntax_check(char **str)
+{
+	// int i;
+	// int j;
+
+	double_quotes(str);
+	// i = 0;
+	// while ((*str)[i])
+	// {
+	// 	if ((*str)[i] == '\'' || (*str)[i] == '\"')
+	// 	{
+	// 		if ((*str)[i] == '\'')
+	// 		{
+	// 			j = i;
+	// 			while ((*str[++j] != '\''))
+	// 				;
+
+	// 		}
+	// 		else
+	// 		{
+
+	// 		}
+	// 	}
+	// }
+
+}
+
+// Поиск команды
+int	command_search(char *str)
 {
 	int	i;
 	int j;
@@ -9,21 +72,25 @@ int command_search(char *str)
 	char *word;
 
 	i = 0;
-	while (str[i] == ' ' || str[i] == '\t')
+	while (str[i] == ' ')
 		i++;
 	start = i;
-	while (str[i] != ' ' || str[i] == '\t' || !(str[i]))
+	while (str[i] != ' ' && (str[i]))
 		i++;
-	word = (char *)malloc(sizeof(char) * (i - start--)); // не забудь подчистить за собой
+	if (!(word = (char *)malloc(sizeof(char) * (i - start--)))) // не забудь подчистить за собой
+		return (-1);
 	j = -1;
 	while (++start < i)
 		word[++j] = str[start];
-	return (1);
+	word[j + 1] = '\0';
+	syntax_check(&word);
+	printf("%s\n", word);
+	return (0);
 }
 
 int parser(char **str)
 {
-	if (!(command_search(*str)))
+	if ((command_search(*str) != 0))
 		return (-1);
 	return (1);
 }
