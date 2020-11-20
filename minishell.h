@@ -13,6 +13,25 @@ typedef	struct s_all
 	size_t	env_amount;
 }				t_all;
 
+typedef struct		s_data
+{
+	char			**argv;
+	char			*file_name;
+	int				pipe;
+	int				red_to;
+	int				doub_red_to;
+	int				red_from;
+	struct s_data	*next;
+}					t_data;
+
+/*
+**		parser
+*/
+t_data	*p_lstnew(void);
+void	p_lstadd_back(t_data **lst, t_data *new);
+void	p_lstclear(t_data **lst, void (*del)(void*));
+t_data	*p_lstlast(t_data *lst);
+int		p_lstsize(t_data *lst);
 /*
 **		builtins
 */
