@@ -57,7 +57,7 @@ void			syntax_check(char *str, t_data **elem, int start, int end)
 		else
 			i++;
 	}
-	printf("%s\n", word);
+	printf("|%s|\n", word);
 	// state = end + 1;
 }
 
@@ -75,16 +75,17 @@ void			arguments_search(char **str, t_data **elem)
 	two_quotes = 0;
 	while ((*str)[++i])
 	{
-		if ((*str)[i] == '\'')
+		// последние два условия для корректной обработки аргументов при экранировании (например, \'\"\\ "\hello\$PWD")
+		if ((*str)[i] == '\'' && (*str)[i - 1] != '\\') 
 			one_quotes++;
-		else if ((*str)[i] == '\"')
+		else if ((*str)[i] == '\"' && (*str)[i - 1] != '\\')
 			two_quotes++;
 		else if ((*str)[i] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
 		{
 			syntax_check(*str, elem, start, i);
-			while ((*str)[i] == ' ')
-				i++;
-			start = i;
+			while ((*str)[i++] == ' ')
+				start = i;
+			i = start - 1;
 		}
 	}
 	syntax_check(*str, elem, start, i);
@@ -96,13 +97,20 @@ void			line_search(char *line, t_data **elem, int start, int end)
 	char		*str;
 	int			j;
 
-	while (line[start] == ' ')
-		start++;
-	str = (char *)malloc(sizeof(char) * ((end + 1) - (start--)));
-	j = -1;
-	while (++start < end)
-		str[++j] = line[start];
-	str[j + 1] = '\0';	
-	arguments_search(&str, elem);
-	free(str);
+	if (end >= start)
+	{
+		while (line[start] == ' ') // убрали пробелы в начале строки
+			start++;
+		while (line[end] == ' ')
+			end--;
+		if (line[end] != ' ')
+			end++;
+		str = (char *)malloc(sizeof(char) * ((end + 1) - (start--))); // почистить
+		j = -1;
+		while (++start < end)
+			str[++j] = line[start];
+		str[j + 1] = '\0';
+		arguments_search(&str, elem);
+		free(str);
+	}
 }

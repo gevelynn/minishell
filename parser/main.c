@@ -40,13 +40,13 @@ void				parser(char **str, t_data **elem)
 				(one_quotes % 2 == 0 && two_quotes % 2 == 0))
 		{
 			check_flags(*str, &temp, i); // установка флагов под разделители
-			line_search(*str, elem, start, i); // обработка одной линии (строки) до разделителя
+			line_search(*str, elem, start, i - 1); // обработка одной линии (строки) до разделителя
 			if ((*str)[i] == '>' && (*str)[i + 1] == '>')
 				i++;
 			start = i + 1;
 		}
 	}
-	line_search(*str, elem, start, i); // когда дошли до конца строки, либо если разделителя не было
+	line_search(*str, elem, start, i - 1); // когда дошли до конца строки, либо если разделителя не было
 }
 
 int				main()
@@ -65,9 +65,6 @@ int				main()
 	free (line);
 	return (0);
 }
-
-
-
 
 
 
