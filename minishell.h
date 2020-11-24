@@ -27,7 +27,7 @@ typedef struct		s_data
 /*
 **		parser
 */
-int		command_search(char *str);
+void	line_search(char *line, t_data **elem, int start, int end);
 t_data	*p_lstnew(void);
 void	p_lstadd_back(t_data **lst, t_data *new);
 void	p_lstclear(t_data **lst, void (*del)(void*));

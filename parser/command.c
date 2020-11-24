@@ -35,45 +35,74 @@ int delete_symbol(char **str, int i, char c)
 }
 
 // убираем кавычки, согласно синтаксису bash
-void	syntax_check(char **str)
+void			syntax_check(char *str, t_data **elem, int start, int end)
 {
-	int i;
-	int j;
+	int			i;
+	int			j;
+	char		*word;
 
+	i = -1;
+	word = (char *)malloc(sizeof(char) * ((end + 1) - (start--))); // почистить
+	while (++start < end)
+		word[++i] = str[start];
+	word[i + 1] = '\0';
 	i = 0;
-	while ((*str)[i])
+	while (word[i])
 	{
-		if ((*str)[i] == '\'' || (*str)[i] == '\"' || (*str)[i] == '\\')
+		if (word[i] == '\'' || word[i] == '\"' || word[i] == '\\')
 		{
-			j = delete_symbol(str, i, (*str)[i]);
+			j = delete_symbol(&word, i, word[i]);
 			i = j;
 		}
 		else
 			i++;
 	}
+	printf("%s\n", word);
+	// state = end + 1;
 }
 
-// Поиск команды
-int	command_search(char *str, t_data **elem, int begin, int end)
-{
-	int	i;
-	int j;
-	int start;
-	char *word;
 
-	i = 0;
-	while (str[i] == ' ')
-		i++;
-	start = i;
-	while ((str[i]) && (str[i]) != ' ')
-		i++;
-	if (!(word = (char *)malloc(sizeof(char) * (i - (start--))))) // не забудь подчистить за собой
-		return (-1);
+void			arguments_search(char **str, t_data **elem)
+{
+	int			i;
+	int			start;
+	int			one_quotes;
+	int			two_quotes;
+
+	i = -1;
+	start = 0;
+	one_quotes = 0;
+	two_quotes = 0;
+	while ((*str)[++i])
+	{
+		if ((*str)[i] == '\'')
+			one_quotes++;
+		else if ((*str)[i] == '\"')
+			two_quotes++;
+		else if ((*str)[i] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
+		{
+			syntax_check(*str, elem, start, i);
+			while ((*str)[i] == ' ')
+				i++;
+			start = i;
+		}
+	}
+	syntax_check(*str, elem, start, i);
+}
+
+// строка для обработки
+void			line_search(char *line, t_data **elem, int start, int end)
+{
+	char		*str;
+	int			j;
+
+	while (line[start] == ' ')
+		start++;
+	str = (char *)malloc(sizeof(char) * ((end + 1) - (start--)));
 	j = -1;
-	while (++start < i)
-		word[++j] = str[start];
-	word[j + 1] = '\0';
-	syntax_check(&word);
-	printf("%s\n", word);
-	return (0);
+	while (++start < end)
+		str[++j] = line[start];
+	str[j + 1] = '\0';	
+	arguments_search(&str, elem);
+	free(str);
 }
