@@ -35,16 +35,19 @@ int delete_symbol(char **str, int i, char c)
 }
 
 // убираем кавычки, согласно синтаксису bash
-void			syntax_check(char *str, t_data **elem, int start, int end)
+void			syntax_check(char *str, int *arr, t_list **new)
 {
 	int			i;
 	int			j;
 	char		*word;
+	t_list		*temp;
 
 	i = -1;
-	word = (char *)malloc(sizeof(char) * ((end + 1) - (start--))); // почистить
-	while (++start < end)
-		word[++i] = str[start];
+	temp = *new;
+	if (!(word = (char *)malloc(sizeof(char) * ((arr[1] + 1) - (arr[0]--))))) // почистить
+		return (error_malloc());
+	while (++arr[0] < arr[1])
+		word[++i] = str[arr[0]];
 	word[i + 1] = '\0';
 	i = 0;
 	while (word[i])
@@ -57,38 +60,43 @@ void			syntax_check(char *str, t_data **elem, int start, int end)
 		else
 			i++;
 	}
-	printf("|%s|\n", word);
-	// state = end + 1;
+	if (temp->content == NULL)
+		temp->content = word;
+	else
+		ft_lstadd_back(&temp, ft_lstnew(word));
 }
 
 
-void			arguments_search(char **str, t_data **elem)
+void			arguments_search(char *str, t_data **elem)
 {
-	int			i;
-	int			start;
+	int			arr[2];
 	int			one_quotes;
 	int			two_quotes;
+	t_list		*new = NULL;
 
-	i = -1;
-	start = 0;
+	arr[0] = 0;
+	arr[1] = -1;
 	one_quotes = 0;
 	two_quotes = 0;
-	while ((*str)[++i])
+	new = ft_lstnew(NULL);
+	while (str[++arr[1]])
 	{
 		// последние два условия для корректной обработки аргументов при экранировании (например, \'\"\\ "\hello\$PWD")
-		if ((*str)[i] == '\'' && (*str)[i - 1] != '\\') 
+		if (str[arr[1]] == '\'' && str[arr[1] - 1] != '\\') 
 			one_quotes++;
-		else if ((*str)[i] == '\"' && (*str)[i - 1] != '\\')
+		else if (str[arr[1]] == '\"' && str[arr[1] - 1] != '\\')
 			two_quotes++;
-		else if ((*str)[i] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
+		else if (str[arr[1]] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
 		{
-			syntax_check(*str, elem, start, i);
-			while ((*str)[i++] == ' ')
-				start = i;
-			i = start - 1;
+			syntax_check(str, arr, &new);
+			while (str[arr[1]++] == ' ')
+				arr[0] = arr[1];
+			arr[1] = arr[0] - 1;
 		}
 	}
-	syntax_check(*str, elem, start, i);
+	syntax_check(str, arr, &new);
+	filling_struct(elem, new, ft_lstsize(new));
+	ft_lstclear(&new, NULL);
 }
 
 // строка для обработки
@@ -105,12 +113,13 @@ void			line_search(char *line, t_data **elem, int start, int end)
 			end--;
 		if (line[end] != ' ')
 			end++;
-		str = (char *)malloc(sizeof(char) * ((end + 1) - (start--))); // почистить
+		if (!(str = (char *)malloc(sizeof(char) * ((end + 1) - (start--))))) // почистить
+			return (error_malloc());
 		j = -1;
 		while (++start < end)
 			str[++j] = line[start];
 		str[j + 1] = '\0';
-		arguments_search(&str, elem);
+		arguments_search(str, elem);
 		free(str);
 	}
 }

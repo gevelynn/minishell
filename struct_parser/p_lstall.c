@@ -29,14 +29,14 @@ void	p_lstdelone(t_data *lst, void (*del)(void*))
 		if (del)
 		{
 			del(lst->file_name);
-			if ((lst->argv))
+			if ((lst->args))
 			{
-				while ((*(lst->argv)))
+				while ((*(lst->args)))
 				{
-					del(*(lst->argv));
-					lst->argv++;
+					del(*(lst->args));
+					lst->args++;
 				}
-				del(lst->argv);
+				del(lst->args);
 			}
 		}
 		free(lst);
@@ -44,19 +44,21 @@ void	p_lstdelone(t_data *lst, void (*del)(void*))
 	}
 }
 
-void	p_lstclear(t_data **lst, void (*del)(void*))
+void	p_lstclear(t_data **lst)
 {
-	t_data	*root;
-	t_data	*tmp;
+	t_data *tmp;
 
-	root = *lst;
-	while (root)
+	if (!lst)
+		return ;
+	while ((*lst))
 	{
-		tmp = root;
-		root = root->next;
-		p_lstdelone(tmp, del);
+		tmp = (*lst)->next;
+		free_ptrs_array((*lst)->args);
+		free((*lst)->file_name);
+		free(*lst);
+		(*lst) = tmp;
 	}
-	*lst = NULL;
+	lst = NULL;
 }
 
 void	p_lstadd_back(t_data **lst, t_data *new)
