@@ -1,6 +1,19 @@
 #include "../libft/libft.h"
 #include "../minishell.h"
 
+void free_array(char **str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+}
+
 int add_string(t_data **elem, char **str, int len)
 {
 	int i;
@@ -15,6 +28,22 @@ int add_string(t_data **elem, char **str, int len)
 			return (0);
 		temp[i] = (*elem)->argv[i];
 	}
+	temp[i] = NULL;
+	free_array((*elem)->argv);
+	i = -1;
+	if (!((*elem)->argv = (char **)malloc(sizeof(char *) * (len + 1))))
+		return (0);
+	while (++i < len)
+	{
+		if (!((*elem)->argv[i] = (char *)malloc(sizeof(char) * ft_strlen(temp[i]))))
+			return (0);
+		(*elem)->argv[i] = temp[i];
+	}
+	if (!((*elem)->argv[i] = (char *)malloc(sizeof(char) * ft_strlen(*str))))
+		return (0);
+	(*elem)->argv[i] = *str;
+	(*elem)->argv[i + 1] = NULL;
+	return (1);
 }
 
 int malloc_array(t_data **elem, char **str)
