@@ -35,10 +35,9 @@ int delete_symbol(char **str, int i, char c)
 }
 
 // убираем кавычки, согласно синтаксису bash
-void			syntax_check(char *str, int *arr, t_list **new)
+void			syntax_check(t_all **all, char *str, int *arr, t_list **new)
 {
 	int			i;
-	int			j;
 	char		*word;
 	t_list		*temp;
 
@@ -49,17 +48,7 @@ void			syntax_check(char *str, int *arr, t_list **new)
 	while (++arr[0] < arr[1])
 		word[++i] = str[arr[0]];
 	word[i + 1] = '\0';
-	i = 0;
-	while (word[i])
-	{
-		if (word[i] == '\'' || word[i] == '\"' || word[i] == '\\')
-		{
-			j = delete_symbol(&word, i, word[i]);
-			i = j;
-		}
-		else
-			i++;
-	}
+	word = search_variable(all, &word);
 	if (temp->content == NULL)
 		temp->content = word;
 	else
@@ -67,7 +56,7 @@ void			syntax_check(char *str, int *arr, t_list **new)
 }
 
 
-void			arguments_search(char *str, t_data **elem)
+void			arguments_search(char *str, t_all **all)
 {
 	int			arr[2];
 	int			one_quotes;
@@ -88,23 +77,26 @@ void			arguments_search(char *str, t_data **elem)
 			two_quotes++;
 		else if (str[arr[1]] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
 		{
-			syntax_check(str, arr, &new);
+			syntax_check(all, str, arr, &new);
 			while (str[arr[1]++] == ' ')
 				arr[0] = arr[1];
 			arr[1] = arr[0] - 1;
 		}
 	}
-	syntax_check(str, arr, &new);
-	filling_struct(elem, new, ft_lstsize(new));
+	syntax_check(all, str, arr, &new);
+	filling_struct(all, new, ft_lstsize(new));
 	ft_lstclear(&new, NULL);
 }
 
 // строка для обработки
-void			line_search(char *line, t_data **elem, int start, int end)
+void			line_search(char *line, t_all **all, int start, int end)
 {
 	char		*str;
 	int			j;
+	// t_data		*temp; // temporary
+	// int			i; // temporary
 
+	// temp = (*all)->data;
 	if (end >= start)
 	{
 		while (line[start] == ' ') // убрали пробелы в начале строки
@@ -119,7 +111,23 @@ void			line_search(char *line, t_data **elem, int start, int end)
 		while (++start < end)
 			str[++j] = line[start];
 		str[j + 1] = '\0';
-		arguments_search(str, elem);
-		free(str);
+		arguments_search(str, all);
+	// 	while (temp)
+	// 	{
+	// 		printf("|New string|\n");
+	// 		i = 0;
+	// 		while (temp->args[i])
+	// 		{
+	// 			printf("%s\n", temp->args[i]);
+	// 			i++;
+	// 		}
+	// 		printf("%d\n", temp->pipe);
+	// 		printf("%d\n", temp->pipe_behind);
+	// 		printf("%d\n", temp->red_to);
+	// 		printf("%d\n", temp->doub_red_to);
+	// 		printf("%d\n", temp->red_from);
+	// 		temp = temp->next;
+	// 	}
+	// 	free(str);
 	}
 }

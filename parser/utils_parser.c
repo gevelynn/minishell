@@ -8,13 +8,13 @@ void	error_malloc()
 		return ;
 }
 
-void filling_struct(t_data **elem, t_list *new, int len)
+void filling_struct(t_all **all, t_list *new, int len)
 {
 	int		i;
 	t_data	*temp;
 
 	i = 0;
-	temp = *elem;
+	temp = (*all)->data;
 	while (temp->next)
 		temp = temp->next;
 	temp->args = ft_calloc(len + 1, sizeof(char *));

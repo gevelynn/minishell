@@ -76,8 +76,11 @@ void	close_file_or_pipe_read(t_all *all);
 /*
 **		parser
 */
-void 	filling_struct(t_data **elem, t_list *new, int len);
-void	line_search(char *line, t_data **elem, int start, int end);
+char	*get_env_str(char *key, t_all *all);
+int		delete_symbol(char **str, int i, char c);
+char	*search_variable(t_all **all, char **word);
+void 	filling_struct(t_all **all, t_list *new, int len);
+void	line_search(char *line, t_all **all, int start, int end);
 t_data	*p_lstnew(void);
 void	p_lstadd_back(t_data **lst, t_data *new);
 void	p_lstclear(t_data **lst);

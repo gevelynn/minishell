@@ -12,7 +12,8 @@ SRC =	builtins_cd_export.c \
 		parser/main.c \
 		parser/utils_parser.c \
 		struct_parser/p_lstall.c \
-		struct_parser/p_lstnew.c
+		struct_parser/p_lstnew.c \
+		parser/utils_syntax.c
 
 OBJ = $(SRC:.c=.o)
 
