@@ -22,9 +22,11 @@ int delete_symbol(char **str, int i, char c, t_all **all)
 		line_shift(str, (i - 1));
 		while ((*str)[i] != c && ((*str)[i]))
 		{
+			//для обработки доллара
 			if ((*str)[i] == '$' && (*str)[i - 1] != '\\' &&
 				(ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_'))
 				i = check_dollar(all, &(*str), i);
+			// -------------------------------------------------------
 			if (flag == 1 && (*str)[i] == '\\' && ((*str)[i + 1] == '$' ||
 				(*str)[i + 1] == '\\' || (*str)[i + 1] == '\"'))
 				line_shift(str, (i - 1));
@@ -74,8 +76,10 @@ void			arguments_search(char *str, t_all **all)
 	while (str[++arr[1]])
 	{
 		// последние два условия для корректной обработки аргументов при экранировании (например, \'\"\\ "\hello\$PWD")
-		if (str[arr[1]] == '\'' && str[arr[1] - 1] != '\\') 
+		if (str[arr[1]] == '\'') 
 			one_quotes++;
+		if (str[arr[1]] == '\'' && str[arr[1] - 1] == '\\' && one_quotes % 2 == 0)
+			one_quotes = 0;
 		else if (str[arr[1]] == '\"' && str[arr[1] - 1] != '\\')
 			two_quotes++;
 		else if (str[arr[1]] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
@@ -96,10 +100,10 @@ void			line_search(char *line, t_all **all, int start, int end)
 {
 	char		*str;
 	int			j;
-	// t_data		*temp; // temporary
-	// int			i; // temporary
+	t_data		*temp; // temporary
+	int			i; // temporary
 
-	// temp = (*all)->data;
+	temp = (*all)->data;
 	if (end >= start)
 	{
 		while (line[start] == ' ') // убрали пробелы в начале строки
@@ -115,22 +119,22 @@ void			line_search(char *line, t_all **all, int start, int end)
 			str[++j] = line[start];
 		str[j + 1] = '\0';
 		arguments_search(str, all);
-	// 	while (temp)
-	// 	{
-	// 		printf("|New string|\n");
-	// 		i = 0;
-	// 		while (temp->args[i])
-	// 		{
-	// 			printf("%s\n", temp->args[i]);
-	// 			i++;
-	// 		}
-	// 		printf("%d\n", temp->pipe);
-	// 		printf("%d\n", temp->pipe_behind);
-	// 		printf("%d\n", temp->red_to);
-	// 		printf("%d\n", temp->doub_red_to);
-	// 		printf("%d\n", temp->red_from);
-	// 		temp = temp->next;
-	// 	}
-	// 	free(str);
+		while (temp)
+		{
+			printf("|New string|\n");
+			i = 0;
+			while (temp->args[i])
+			{
+				printf("|%s|\n", temp->args[i]);
+				i++;
+			}
+			printf("%d\n", temp->pipe);
+			printf("%d\n", temp->pipe_behind);
+			printf("%d\n", temp->red_to);
+			printf("%d\n", temp->doub_red_to);
+			printf("%d\n", temp->red_from);
+			temp = temp->next;
+		}
+		free(str);
 	}
 }
