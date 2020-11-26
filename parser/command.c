@@ -8,7 +8,7 @@ void line_shift(char **str, int j)
 		(*str)[j] = (*str)[j + 1];
 }
 
-int delete_symbol(char **str, int i, char c)
+int delete_symbol(char **str, int i, char c, t_all **all)
 {
 	int flag;
 
@@ -22,6 +22,9 @@ int delete_symbol(char **str, int i, char c)
 		line_shift(str, (i - 1));
 		while ((*str)[i] != c && ((*str)[i]))
 		{
+			if ((*str)[i] == '$' && (*str)[i - 1] != '\\' &&
+				(ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_'))
+				i = check_dollar(all, &(*str), i);
 			if (flag == 1 && (*str)[i] == '\\' && ((*str)[i + 1] == '$' ||
 				(*str)[i + 1] == '\\' || (*str)[i + 1] == '\"'))
 				line_shift(str, (i - 1));

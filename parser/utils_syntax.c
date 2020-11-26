@@ -47,16 +47,16 @@ char		*search_variable(t_all **all, char **word)
 		{
 			if ((*word)[i] == '\'')
 				one_quotes++;
-			i = delete_symbol(&(*word), i, (*word)[i]);
+			i = delete_symbol(&(*word), i, (*word)[i], all);\
 		}
 		else if ((*word)[i] == '$' && one_quotes % 2 == 0 && (*word)[i - 1] != '\\' &&
 				(ft_isalnum((*word)[i + 1]) || (*word)[i + 1] == '_'))
-		{
-			printf("GOOD\n");
-			printf("%s\n", (*word));
-			printf("%d\n", i);
+		// {
+		// 	printf("GOOD\n");
+		// 	printf("%s\n", (*word));
+		// 	printf("%d\n", i);
 			i = check_dollar(all, &(*word), i); //функция должна вернуть int (то есть с какого места продолжаем парсить строку)
-		}
+		// }
 		else
 			i++;
 	}
