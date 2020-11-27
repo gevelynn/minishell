@@ -8,35 +8,39 @@ void line_shift(char **str, int j)
 		(*str)[j] = (*str)[j + 1];
 }
 
-int delete_symbol(char **str, int i, char c, t_all **all)
+int delete_symbol(char **str, int i, char c)
 {
-	int flag;
+    int flag;
+    int check; //для запоминания переменной окружения
 
-	flag = 0;
-	if (c == '\"') // для экранирования специальных символом $\"
-		flag = 1;
-	if (c == '\\')
-		line_shift(str, ((i++) - 1));
-	else
-	{
-		line_shift(str, (i - 1));
-		while ((*str)[i] != c && ((*str)[i]))
-		{
-			//для обработки доллара
-			if ((*str)[i] == '$' && (*str)[i - 1] != '\\' &&
-				(ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_'))
-				i = check_dollar(all, &(*str), i);
-			// -------------------------------------------------------
-			if (flag == 1 && (*str)[i] == '\\' && ((*str)[i + 1] == '$' ||
-				(*str)[i + 1] == '\\' || (*str)[i + 1] == '\"'))
-				line_shift(str, (i - 1));
-			i++;
-		}
-		if ((*str)[i] != c)
-			(*str)[i] = c;
-		line_shift(str, (i - 1));
-	}
-	return (i);
+    check = -1;
+    flag = 0;
+    if (c == '\"') // для экранирования специальных символом $\"
+        flag = 1;
+    if (c == '\\')
+        line_shift(str, ((i++) - 1));
+    else
+    {
+        line_shift(str, (i - 1));
+        while ((*str)[i] != c && ((*str)[i]))
+        {
+            //для обработки доллара
+            if ((*str)[i] == '$' && (*str)[i - 1] != '\\' &&
+                (ft_isalnum((*str)[i + 1]) || (*str)[i + 1] == '_'))
+                check = i;
+            // -------------------------------------------------------
+            if (flag == 1 && (*str)[i] == '\\' && ((*str)[i + 1] == '$' ||
+                (*str)[i + 1] == '\\' || (*str)[i + 1] == '\"'))
+                line_shift(str, (i - 1));
+            i++;
+        }
+        if ((*str)[i] != c)
+            (*str)[i] = c;
+        line_shift(str, (i - 1));
+    }
+    if (check > -1)
+        return (check);
+    return (i);
 }
 
 // убираем кавычки, согласно синтаксису bash

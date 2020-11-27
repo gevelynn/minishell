@@ -34,10 +34,12 @@ void				parser(char *str, t_all *all)
 	// temp = all->data;  // coхранили голову
 	while (str[++i]) //поиск разделителя
 	{
-		if (str[i] == '\'')
-			one_quotes++;
-		else if (str[i] == '\"')
-			two_quotes++;
+        if (str[i] == '\"')
+            two_quotes++;
+        if (str[i] == '\"' && str[i - 1] == '\\')
+            two_quotes--;
+        else if (str[i] == '\'')
+            one_quotes++;
 		else if ((str[i] == ';' || str[i] == '|' || str[i] == '<' || str[i] == '>') &&
 				(one_quotes % 2 == 0 && two_quotes % 2 == 0))
 		{
