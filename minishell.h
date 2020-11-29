@@ -76,12 +76,13 @@ void	close_file_or_pipe_read(t_all *all);
 /*
 **		parser
 */
-int		check_dollar(t_all **all, char **word, int i);
+int		counting_quotes(char *str, int one_quotes, int two_quotes, int i);
+int		check_dollar(t_all *all, char **word, int i);
 char	*get_env_str(char *key, t_all *all);
 int		delete_symbol(char **str, int i, char c);
-char	*search_variable(t_all **all, char **word);
-void 	filling_struct(t_all **all, t_list *new, int len);
-void	line_search(char *line, t_all **all, int start, int end);
+char	*search_variable(t_all *all, char **word, char *str, int *arr);
+void 	filling_struct(t_all *all, t_list *new, int len);
+void	line_search(char *line, t_all *all, int start, int end);
 t_data	*p_lstnew(void);
 void	p_lstadd_back(t_data **lst, t_data *new);
 void	p_lstclear(t_data **lst);
