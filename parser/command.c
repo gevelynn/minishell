@@ -2,7 +2,7 @@
 #include "../minishell.h"
 
 // убираем кавычки, согласно синтаксису bash
-void			syntax_check(t_all *all, char *str, int *arr, t_list **new)
+void			syntax_check(t_all *all, char *str, int **arr, t_list **new)
 {
 	int			i;
 	char		*word;
@@ -10,9 +10,9 @@ void			syntax_check(t_all *all, char *str, int *arr, t_list **new)
 
 	i = -1;
 	temp = *new;
-	if (!(word = ft_calloc((arr[1] + 1) - arr[0], sizeof(char)))) // почистить
+	if (!(word = ft_calloc(((*arr)[1] + 1) - (*arr)[0], sizeof(char)))) // почистить
 		return (error_malloc());
-	word = search_variable(all, &word, str, arr);
+	search_variable(all, &word, str, arr);
 	if (temp->content == NULL)
 		temp->content = word;
 	else
@@ -22,33 +22,34 @@ void			syntax_check(t_all *all, char *str, int *arr, t_list **new)
 
 void			arguments_search(char *str, t_all *all)
 {
-	int			arr[2];
-	int			one_quotes;
-	int			two_quotes;
+	int			*arr;
+	int			quotes[2];
 	t_list		*new = NULL;
 
+	arr = malloc(sizeof(int) * 2);
 	arr[0] = 0;
 	arr[1] = -1;
-	one_quotes = 0;
-	two_quotes = 0;
+	quotes[0] = 0;
+	quotes[1] = 0;
 	new = ft_lstnew(NULL);
 	while (str[++arr[1]])
 	{
 		if(str[arr[1]] == '\'')
-			one_quotes = counting_quotes(str, one_quotes, two_quotes, arr[1]);
+			quotes[0] = counting_quotes(str, quotes[0], quotes[1], arr[1]);
 		else if(str[arr[1]] == '\"')
-			two_quotes = counting_quotes(str, one_quotes, two_quotes, arr[1]);
-		else if (str[arr[1]] == ' ' && one_quotes % 2 == 0 && two_quotes % 2 == 0)
+			quotes[1] = counting_quotes(str, quotes[0], quotes[1], arr[1]);
+		else if (str[arr[1]] == ' ' && quotes[0] % 2 == 0 && quotes[1] % 2 == 0)
 		{
-			syntax_check(all, str, arr, &new);
+			syntax_check(all, str, &arr, &new);
 			while (str[arr[1]++] == ' ')
 				arr[0] = arr[1];
 			arr[1] = arr[0] - 1;
 		}
 	}
-	syntax_check(all, str, arr, &new);
+	syntax_check(all, str, &arr, &new);
 	filling_struct(all, new, ft_lstsize(new));
 	ft_lstclear(&new, NULL);
+	free(arr);
 }
 
 // строка для обработки
