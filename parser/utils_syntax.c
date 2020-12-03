@@ -42,7 +42,7 @@ void        search_dollar(char **word, char *str, int **start, int *i)
     check = *i; //запомнили место куда будет переписана переменная окружения в word
     (*start)[0]++;
     while (str[(*start)[0]] && str[(*start)[0]] != '\'' && str[(*start)[0]] != '\"' && str[(*start)[0]] != ' ' &&
-        str[(*start)[0]] != '$' && str[(*start)[0]] != '\\')
+        str[(*start)[0]] != '$' && str[(*start)[0]] != '\\' && str[(*start)[0]] != '=')
     {
         if (str[num] == '$' && ((ft_isdigit(str[num + 1]) && ft_isdigit(str[num + 2])) || str[num + 1] == '?'))
         {
@@ -110,7 +110,7 @@ char        *search_variable(t_all *all, char **word, char *str, int **start)
         else if(str[(*start)[0]] == '\'')
         {
             quotes[0]++;
-            if(quotes[1] % 2 || (str[i - 1] == '\\'))
+            if(quotes[1] % 2)
             {
                 (*word)[i] = str[(*start)[0]];
                 quotes[0]++;

@@ -50,7 +50,8 @@ void		parser(char *str, t_all *all)
 			one_quotes = counting_quotes(str, one_quotes, two_quotes, i);
 		else if(str[i] == '\"')
 			two_quotes = counting_quotes(str, one_quotes, two_quotes, i);
-		else if ((str[i] == ';' || str[i] == '|') && !(one_quotes % 2) && !(two_quotes % 2))
+		else if ((str[i] == ';' || str[i] == '|') && !(one_quotes % 2) && !(two_quotes % 2)
+				&& str[i - 1] != '\\')
 		{
 			recording_arguments(str, all, start, i);
 			start = i + 1;
