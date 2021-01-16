@@ -2,13 +2,20 @@
 
 char	*ft_strchr(const char *s, int c)
 {
-	while (*s != (char)c)
+	size_t	i;
+	char	*s_cpy;
+	char	c_cpy;
+
+	i = 0;
+	s_cpy = (char*)s;
+	c_cpy = (char)c;
+	while (s_cpy[i])
 	{
-		if (*s == '\0')
-		{
-			return (NULL);
-		}
-		s++;
+		if (s_cpy[i] == c_cpy)
+			return (&(s_cpy[i]));
+		i++;
 	}
-	return ((char *)s);
+	if (s_cpy[i] == c_cpy)
+		return (&(s_cpy)[i]);
+	return (NULL);
 }

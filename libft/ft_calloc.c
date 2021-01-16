@@ -2,17 +2,12 @@
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*array;
-	size_t	i;
+	size_t	amount;
+	char	*str;
 
-	i = 0;
-	array = malloc(nmemb * size);
-	if (!array)
+	amount = nmemb * size;
+	if (!(str = (char*)malloc(amount * sizeof(char))))
 		return (NULL);
-	while (i < nmemb * size)
-	{
-		((char *)array)[i] = '\0';
-		i++;
-	}
-	return (array);
+	ft_bzero(str, amount);
+	return (str);
 }

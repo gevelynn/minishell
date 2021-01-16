@@ -1,19 +1,27 @@
 NAME = minishell
 
-SRC =	builtins_cd_export.c \
-		builtins_unset_env_pwd.c \
-		execve_test.c \
-		error_handling.c \
-		pipes.c \
-		redirections.c \
-		env_vars_utils.c \
-		execution.c \
-		parser/command.c \
-		parser/main.c \
-		parser/utils_parser.c \
-		struct_parser/p_lstall.c \
-		struct_parser/p_lstnew.c \
-		parser/utils_syntax.c
+SRC =	src/builtins/builtins_cd.c \
+		src/builtins/builtins_export.c \
+		src/builtins/builtins_export_utils.c \
+		src/builtins/builtins_utils.c \
+		src/builtins/builtins_unset_env_pwd.c \
+		src/builtins/exec_child_process.c \
+		src/builtins/error_handling.c \
+		src/builtins/pipes.c \
+		src/builtins/redirections.c \
+		src/builtins/env_vars_utils.c \
+		src/builtins/execution.c \
+		src/builtins/builtins_echo_exit.c \
+		src/parser/command.c \
+		src/parser/main.c \
+		src/parser/utils_syntax.c \
+		src/parser/filling_token_struct.c \
+		src/parser/list_struct.c \
+		src/parser/utils_variable.c \
+		src/parser/help_functions.c \
+		src/parser/split_args_and_redirects.c \
+		src/parser/check_syntax_errors.c \
+		src/parser/parser.c 
 
 OBJ = $(SRC:.c=.o)
 
@@ -23,7 +31,8 @@ LIBFT = $(LIBFTDIR)libft.a
 
 CC = gcc
 
-CFLAGS = -g -Wall -Werror -Wextra -I./libft
+CFLAGS = -g -Wall -Werror -Wextra -I./libft -I./includes #-fsanitize=address
+
 all:	$(NAME)
 
 %.o: %.c
@@ -47,4 +56,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
-

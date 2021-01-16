@@ -1,26 +1,24 @@
 #include "minishell.h"
 
-void	ctrl_c_handler(int signum)
+void	env_init(t_all *all)
 {
-	signum = 0;
-	ft_putstr_fd("\b\b  \n> \033[1;35m$\033[0m ", 1);
-}
+	char	*cwd;
+	char	*shlvl_str;
+	int		shlvl_int;
 
-void	free_ptrs_array(char **ptr_array)
-{
-	size_t i;
-
-	i = 0;
-	if (ptr_array)
+	cwd = getcwd(NULL, 0);
+	edit_or_add_env_line("PWD=", cwd, all);
+	if (!(shlvl_str = get_env_str("SHLVL", all)))
+		edit_or_add_env_line("SHLVL=", "1", all);
+	else
 	{
-		while (ptr_array[i])
-		{
-			free(ptr_array[i]);
-			ptr_array[i] = NULL;
-			i++;
-		}
-		free(ptr_array);
+		shlvl_int = ft_atoi(shlvl_str) + 1;
+		free(shlvl_str);
+		shlvl_str = ft_itoa(shlvl_int);
+		edit_or_add_env_line("SHLVL=", shlvl_str, all);
+		free(shlvl_str);
 	}
+	free(cwd);
 }
 
 int		get_env_line_nbr(char *to_find, t_all *all)
@@ -32,7 +30,9 @@ int		get_env_line_nbr(char *to_find, t_all *all)
 	len = ft_strlen(to_find);
 	while (all->env_vars[i])
 	{
-		if (ft_strncmp(to_find, all->env_vars[i], len) == 0)
+		if (ft_strncmp(to_find, all->env_vars[i], len) == 0 &&
+			((to_find[len - 1] == '=') ||
+				(to_find[len - 1] != '=' && all->env_vars[i][len] == '=')))
 			return (i);
 		i++;
 	}
@@ -72,5 +72,5 @@ char	*get_env_str(char *key, t_all *all)
 	key_len = ft_strlen(key);
 	if (all->env_vars[nbr][key_len] != '=')
 		return (NULL);
-	return (&(all->env_vars[nbr][key_len + 1]));
+	return (ft_strdup(&(all->env_vars[nbr][key_len + 1])));
 }

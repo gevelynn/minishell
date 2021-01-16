@@ -1,62 +1,52 @@
 #include "libft.h"
 
-static size_t	len_number(long int n)
+static	int		digit_counter(int n)
 {
-	size_t		len;
+	int count;
 
-	len = 0;
+	count = 0;
 	if (n == 0)
 		return (1);
+	if (n == -2147483648)
+		return (11);
 	if (n < 0)
 	{
+		count++;
 		n = -n;
-		len++;
 	}
-	while (n > 0)
+	while (n >= 1)
 	{
-		n = n / 10;
-		len++;
+		count++;
+		n /= 10;
 	}
-	return (len);
-}
-
-static char		*result_number(char *s, size_t len_n, long int nb)
-{
-	while (nb > 0)
-	{
-		if (nb / 10 == 0)
-		{
-			s[--len_n] = nb + '0';
-			nb = nb / 10;
-		}
-		else
-		{
-			s[--len_n] = (nb % 10) + '0';
-			nb = nb / 10;
-		}
-	}
-	return (s);
+	return (count);
 }
 
 char			*ft_itoa(int n)
 {
-	char		*str;
-	size_t		len_nb;
-	long int	num;
+	char	*nbr;
+	int		count;
 
-	num = n;
-	len_nb = (size_t)len_number(num);
-	str = (char *)malloc(sizeof(char) * (len_nb + 1));
-	if (!str)
+	count = digit_counter(n);
+	if (!(nbr = (char*)malloc((count + 1) * sizeof(char))))
 		return (NULL);
-	if (num < 0)
+	nbr[count--] = '\0';
+	if (n == 0)
+		nbr[count] = '0';
+	if (n < 0)
 	{
-		str[0] = '-';
-		num = -num;
+		nbr[0] = '-';
+		if (n == -2147483648)
+		{
+			nbr[1] = '2';
+			n = -147483648;
+		}
+		n = -n;
 	}
-	str[len_nb] = '\0';
-	if (num == 0)
-		str[--len_nb] = '0';
-	str = result_number(str, len_nb, num);
-	return (str);
+	while (n >= 1)
+	{
+		nbr[count--] = n % 10 + '0';
+		n /= 10;
+	}
+	return (nbr);
 }

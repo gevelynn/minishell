@@ -1,4 +1,19 @@
-#include "../minishell.h"
+#include "minishell.h"
+
+t_data	*p_lstnew(void)
+{
+	t_data	*new_elem;
+
+	if (!(new_elem = (t_data *)malloc(sizeof(t_data))))
+		return (NULL);
+	new_elem->args = NULL;
+	new_elem->redir_array = NULL;
+	new_elem->pipe = 0;
+	new_elem->pipe_behind = 0;
+	new_elem->redir = 0;
+	new_elem->next = NULL;
+	return (new_elem);
+}
 
 t_data	*p_lstlast(t_data *lst)
 {
@@ -22,43 +37,21 @@ int		p_lstsize(t_data *lst)
 	return (i);
 }
 
-void	p_lstdelone(t_data *lst, void (*del)(void*))
-{
-	if (lst)
-	{
-		if (del)
-		{
-			del(lst->file_name);
-			if ((lst->args))
-			{
-				while ((*(lst->args)))
-				{
-					del(*(lst->args));
-					lst->args++;
-				}
-				del(lst->args);
-			}
-		}
-		free(lst);
-		lst = NULL;
-	}
-}
-
 void	p_lstclear(t_data **lst)
 {
 	t_data *tmp;
 
 	if (!lst)
 		return ;
-	while ((*lst))
+	while (*lst)
 	{
-		tmp = (*lst)->next;
-		free_ptrs_array((*lst)->args);
-		free((*lst)->file_name);
-		free(*lst);
-		(*lst) = tmp;
+		tmp = *lst;
+		free_ptrs_array(tmp->args);
+		free_ptrs_array(tmp->redir_array);
+		*lst = (*lst)->next;
+		free(tmp);
 	}
-	lst = NULL;
+	*lst = NULL;
 }
 
 void	p_lstadd_back(t_data **lst, t_data *new)

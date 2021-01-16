@@ -4,18 +4,9 @@ char	*ft_strrchr(const char *s, int c)
 {
 	size_t	i;
 
-	i = 0;
-	while (*s)
-	{
-		s++;
-		i++;
-	}
-	while (*s != c)
-	{
-		if (i == 0)
-			return (NULL);
-		s--;
-		i--;
-	}
-	return ((char *)s);
+	i = ft_strlen(s) + 1;
+	while (i != 0)
+		if (s[--i] == c)
+			return (&((char*)s)[i]);
+	return (NULL);
 }
